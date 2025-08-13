@@ -3,8 +3,8 @@ import os
 import re
 import logging
 import time
-from xai_sdk import Client
-from xai_sdk.chat import user
+from xai_grok_sdk import Client
+from xai_grok_sdk.chat import user
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
