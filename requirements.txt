@@ -1,7 +1,7 @@
 flask==3.0.3
 gunicorn==22.0.0
 python-dotenv==1.0.1
-xai-grok-sdk==0.0.4
+xai-grok-sdk==0.0.12
 httpx==0.27.0
 pandas==2.2.2
 numpy==1.26.4
