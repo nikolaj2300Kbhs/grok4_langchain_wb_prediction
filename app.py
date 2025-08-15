@@ -3,20 +3,24 @@ import os
 import re
 import logging
 import time
-from xai_grok_sdk import Client
-from xai_grok_sdk.chat import user
+from openai import OpenAI
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
+# Use XAI_API_KEY from environment (set this in Render to your xAI key)
 XAI_API_KEY = os.getenv("XAI_API_KEY")
 if not XAI_API_KEY:
     logger.error("XAI_API_KEY is not set")
     raise ValueError("XAI_API_KEY is not set")
 
-client = Client(api_key=XAI_API_KEY)
+# Initialize OpenAI client with xAI base URL
+client = OpenAI(
+    api_key=XAI_API_KEY,
+    base_url="https://api.x.ai/v1"
+)
 
 template = """ 
 Context: {context} 
@@ -57,10 +61,11 @@ Return only the numerical value (e.g., 10).
 def call_xai_api(prompt_text, model_name="grok-4-0709"):
     try:
         logger.info(f"Calling xAI API with prompt: {prompt_text[:50]}...")
-        chat = client.chat.create(model=model_name, temperature=0.7)
-        chat.append(user(prompt_text))
-        response = chat.sample()
-        return response.content.strip()
+        response = client.chat.completions.create(
+            model=model_name,
+            messages=[{"role": "user", "content": prompt_text}]
+        )
+        return response.choices[0].message.content.strip()
     except Exception as e:
         logger.error(f"xAI API error: {str(e)}")
         raise
